@@ -8,7 +8,9 @@ export function login(data) {
 export function getInfo(token) {
   return get('/api/user/info', token)
 }
-
+export function logout() {
+  return post('/api/logout')
+}
 // export function login(data) {
 //   return request({
 //     url: '/api/login',
@@ -25,9 +27,9 @@ export function getInfo(token) {
 //   })
 // }
 
-export function logout() {
-  return request({
-    url: '/vue-admin-template/user/logout',
-    method: 'post'
-  })
-}
+// export function logout() {
+//   return request({
+//     url: '/vue-admin-template/user/logout',
+//     method: 'post'
+//   })
+// }

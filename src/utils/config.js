@@ -1,6 +1,6 @@
 import axios from 'axios'
 import store from '@/store'
-import { getToken } from '@/utils/auth'
+import { getAccessToken, getRefreshToken } from '@/utils/auth'
 import qs from 'qs'
 // axios.defaults.headers.get['content-type'] = 'application/x-www-form-urlencoded'
 // axios.defaults.headers.post['content-type'] = 'application/json'
@@ -15,8 +15,14 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // do something before request is sent
-    if (store.getters.token) {
-      config.headers['Authorization'] = getToken()
+    console.log('filter: ',store);
+    if (store.getters.accessToken && store.getters.refreshToken) {
+      if (getAccessToken()) {
+        config.headers['Authorization'] = getAccessToken()
+      }
+      if (getRefreshToken()) {
+        config.headers['RefreshToken'] = getRefreshToken()
+      }
     }
     return config
   },
