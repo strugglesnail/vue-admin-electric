@@ -1,7 +1,7 @@
 import axios from 'axios'
 import store from '@/store'
 import { MessageBox, Message } from 'element-ui'
-import { getAccessToken, getRefreshToken, setAccessToken } from '@/utils/auth'
+import { getAccessToken, getRefreshToken } from '@/utils/auth'
 import qs from 'qs'
 
 const service = axios.create({
@@ -43,8 +43,20 @@ service.interceptors.response.use(
       Message({
         message: res.msg || 'Error',
         type: 'error',
-        duration: 5 * 1000
+        duration: 3 * 1000
       })
+      if (res.code === 402) {
+        // to re-login
+        MessageBox.confirm('您已注销，可以取消停留在此页面上，或者再次登录', '确定退出?', {
+          confirmButtonText: '重新登录',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          store.dispatch('user/resetToken').then(() => {
+            location.reload()
+          })
+        })
+      }
       return Promise.reject(new Error(res.msg || 'Error'))
     } else {
       return response

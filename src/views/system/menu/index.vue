@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-container style="height: 500px; border: 1px solid #eee">
+    <el-container style="height: 600px; border: 1px solid #eee">
       <el-aside width="300px" style="background-color: rgb(238, 241, 246);border: 10px solid #eee;">
         <el-tree
           :data="data"
@@ -10,19 +10,19 @@
           @node-click="nodeClick"
           @node-contextmenu="rightClick"
         />
-        <div id="menu"  @mouseleave="menuVisible = !menuVisible">
-          <el-card class="box-card" v-if="menuVisible">
+        <div id="menu" @mouseleave="menuVisible = !menuVisible">
+          <el-card v-if="menuVisible" class="box-card">
             <div class="text item">
-              <el-link icon="el-icon-circle-plus-outline" @click="addNode(operateNode)" :underline="false">添加</el-link>
+              <el-link icon="el-icon-circle-plus-outline" :underline="false" @click="addNode(operateNode)">添加</el-link>
             </div>
             <div class="text item">
-              <el-link icon="el-icon-remove-outline" @click="removeNode(operateNode)" :underline="false">删除</el-link>
+              <el-link icon="el-icon-remove-outline" :underline="false" @click="removeNode(operateNode)">删除</el-link>
             </div>
           </el-card>
         </div>
       </el-aside>
       <el-main style="border: 10px solid #eee;">
-        <menu-form :node="nodeData" :hasClear="hasClear"/>
+        <menu-form ref="menuForm" :node="nodeData" :has-clear="hasClear" />
       </el-main>
     </el-container>
   </div>
@@ -81,7 +81,7 @@ export default {
       nodeData: {},
       operateNode: {},
       menuVisible: false,
-      hasClear: false // 是否清除表单：true=添加操作  false=更新操作
+      hasClear: true // 是否清除表单：true=添加操作  false=更新操作
     }
   },
   mounted() {
@@ -89,12 +89,14 @@ export default {
   },
   methods: {
     nodeClick(node, even) {
-      this.setNode(node.id, even.parent.label)
+      console.log('even: ', even)
+      this.setNode(node.id, even.parent.key, even.parent.label)
+
       this.hasClear = false
+      this.$refs.menuForm.getMenu(node.id)
     },
     rightClick(MouseEvent, object, node, element) {
       this.operateNode = object
-      // this.setNode(null, node.parent.label)
       this.menuVisible = true
       const menu = document.querySelector('#menu')
       if (menu) {
@@ -106,7 +108,7 @@ export default {
     addNode(node) {
       // 清空表单
       this.hasClear = true
-      // console.log(node)
+      this.$refs.menuForm.resetForm()
       this.setNode(node.id, node.label)
       this.menuVisible = false
     },

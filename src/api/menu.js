@@ -8,6 +8,14 @@ export function getMenuById(param) {
   return get('/api/menu/getMenuById', param)
 }
 
+export function saveMenu(param) {
+  return post('/api/menu/saveMenu', param)
+}
+
+export function updateMenu(param) {
+  return post('/api/menu/updateMenu', param)
+}
+
 // export function login(data) {
 //   return request({
 //     url: '/api/login',
