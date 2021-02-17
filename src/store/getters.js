@@ -4,6 +4,7 @@ const getters = {
   accessToken: state => state.user.accessToken,
   refreshToken: state => state.user.refreshToken,
   avatar: state => state.user.avatar,
-  name: state => state.user.name
+  name: state => state.user.name,
+  menu: state => state.user.menu
 }
 export default getters

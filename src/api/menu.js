@@ -1,16 +1,11 @@
-import request from '@/utils/request'
-import { get, post, postLogin } from '@/utils/config'
+import { get, post } from '@/utils/config'
 
-export function login(data) {
-  return postLogin('/api/login', data)
+export function getMenuList() {
+  return get('/api/menu/menuList')
 }
 
-export function getInfo(token) {
-  return get('/api/user/info', token)
-}
-
-export function logout() {
-  return post('/api/logout')
+export function getMenuById(param) {
+  return get('/api/menu/getMenuById', param)
 }
 
 // export function login(data) {

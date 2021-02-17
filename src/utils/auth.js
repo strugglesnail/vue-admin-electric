@@ -1,6 +1,5 @@
 import Cookies from 'js-cookie'
 
-
 // accessToken
 const accessTokenKey = 'accessToken'
 

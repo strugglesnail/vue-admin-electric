@@ -1,9 +1,8 @@
 import axios from 'axios'
 import store from '@/store'
-import { getAccessToken, getRefreshToken } from '@/utils/auth'
+import { MessageBox, Message } from 'element-ui'
+import { getAccessToken, getRefreshToken, setAccessToken } from '@/utils/auth'
 import qs from 'qs'
-// axios.defaults.headers.get['content-type'] = 'application/x-www-form-urlencoded'
-// axios.defaults.headers.post['content-type'] = 'application/json'
 
 const service = axios.create({
   baseURL: '', // url = base url + request url
@@ -15,10 +14,9 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // do something before request is sent
-    console.log('filter: ',store);
     if (store.getters.accessToken && store.getters.refreshToken) {
       if (getAccessToken()) {
-        config.headers['Authorization'] = getAccessToken()
+        config.headers['Authorization'] = store.getters.accessToken
       }
       if (getRefreshToken()) {
         config.headers['RefreshToken'] = getRefreshToken()
@@ -28,7 +26,37 @@ service.interceptors.request.use(
   },
   error => {
     // do something with request error
-    console.log(error) // for debug
+    // for debug
+    return Promise.reject(error)
+  }
+)
+service.interceptors.response.use(
+  response => {
+    if (response.headers.authorization) {
+      // 重新设置accessToken
+      store.dispatch('user/setAccessToken', response.headers.authorization)
+    }
+    const res = response.data
+
+    // if the custom code is not 200, it is judged as an error.
+    if (res.code !== 200) {
+      Message({
+        message: res.msg || 'Error',
+        type: 'error',
+        duration: 5 * 1000
+      })
+      return Promise.reject(new Error(res.msg || 'Error'))
+    } else {
+      return response
+    }
+  },
+  error => {
+    // for debug
+    Message({
+      message: error.message,
+      type: 'error',
+      duration: 5 * 1000
+    })
     return Promise.reject(error)
   }
 )

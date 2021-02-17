@@ -110,16 +110,14 @@ export default {
         if (valid) {
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm).then((res) => {
-            console.log('2432L: ', res)
             if (res.success) {
-              this.$router.push({ path: '/example' })
+              this.$router.push({ path: '/' })
               this.$message.success(res.msg)
             } else {
               this.$message.error(res.msg)
             }
             this.loading = false
           }).catch((res) => {
-            console.log('11: ', res)
             this.loading = false
           })
         } else {
