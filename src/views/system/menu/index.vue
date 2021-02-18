@@ -22,7 +22,7 @@
         </div>
       </el-aside>
       <el-main style="border: 10px solid #eee;">
-        <menu-form ref="menuForm" :node="nodeData" :has-clear="hasClear" />
+        <menu-form ref="menuForm" :node="nodeData" :has-clear="hasClear" @reset="reset" @refreshMenu="refreshMenu"/>
       </el-main>
     </el-container>
   </div>
@@ -89,8 +89,7 @@ export default {
   },
   methods: {
     nodeClick(node, even) {
-      console.log('even: ', even)
-      this.setNode(node.id, even.parent.key, even.parent.label)
+      this.setNode(node.id, even.parent.label)
 
       this.hasClear = false
       this.$refs.menuForm.getMenu(node.id)
@@ -106,6 +105,7 @@ export default {
 
     // 添加操作
     addNode(node) {
+      node = node.rootNode
       // 清空表单
       this.hasClear = true
       this.$refs.menuForm.resetForm()
@@ -114,7 +114,12 @@ export default {
     },
     // 删除操作
     removeNode(node) {
-      console.log('remove:', node.id)
+      // 获取该节点下的子节点id
+      const ids = this.getNodeIds(node.id, node.children)
+      ids.push(node.id)
+      console.log(ids)
+      this.$refs.menuForm.delete(ids)
+      this.refreshMenu()
       this.menuVisible = false
     },
     setNode(id, label) {
@@ -127,6 +132,29 @@ export default {
           this.data = res.data
         }
       })
+    },
+    // 刷新菜单栏
+    refreshMenu() {
+      this.getMenuList()
+    },
+    // 重置
+    reset() {
+      this.$set(this.nodeData, 'label', '')
+      this.hasClear = true
+    },
+    // 获取节点id
+    getNodeIds(pid, nodes) {
+      const menus = []
+      nodes.forEach(node => {
+          menus.push(node.id)
+          if (node.children && node.children.length) {
+            const ids = this.getNodeIds(node.id, node.children)
+            ids.forEach(id => {
+              menus.push(id)
+            })
+          }
+      })
+      return menus
     }
   }
 }

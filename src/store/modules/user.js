@@ -137,10 +137,12 @@ const actions = {
 function filterAsyncRouter(menuList) {
   const menus = []
   menuList.map(menu => {
+    // const paths = menu.path.split('/')
+    // console.log(menu.path, paths)
     const m = {
       path: menu.path,
       component: Layout,
-      redirect: menu.redirect,
+      // redirect: menu.redirect,
       children: [],
       hidden: menu.available === 0
     }
@@ -149,20 +151,15 @@ function filterAsyncRouter(menuList) {
       m.children.push(getChildRouters(menu.children))
     } else {
       m.children.push({
-        path: menu.url,
-        component: loadView(menu.component),
+        path: menu.path,
         name: menu.enname,
+        component: loadView(menu.component),
         meta: { title: menu.label, icon: menu.icon }
       })
     }
     menus.push(m)
   })
   // 加载默认的路由
-  // menus.push({
-  //   path: '/login',
-  //   component: () => import('@/views/login/index'),
-  //   hidden: true
-  // })
   menus.push({
     path: '/404',
     component: () => import('@/views/404'),

@@ -15,6 +15,9 @@
     <el-form-item label="菜单路径"  prop="path">
       <el-input v-model="form.path" placeholder="请输入菜单路径" />
     </el-form-item>
+    <el-form-item label="菜单图标">
+      <el-input v-model="form.icon" placeholder="请输入菜单图标" />
+    </el-form-item>
     <el-form-item label="访问权限"  prop="url">
       <el-input v-model="form.url" placeholder="请输入访问权限" />
     </el-form-item>
@@ -23,12 +26,12 @@
     </el-form-item>
     <el-form-item>
       <el-button type="primary" @click="onSubmit">{{hasClear ? '保存' : '更新'}}</el-button>
-      <el-button>重置</el-button>
+      <el-button @click="reset">重置</el-button>
     </el-form-item>
   </el-form>
 </template>
 <script>
-import { getMenuById, saveMenu, updateMenu } from '@/api/menu'
+import { getMenuById, saveMenu, updateMenu, deleteMenu } from '@/api/menu'
 export default {
   name: 'MenuForm',
   props: {
@@ -47,6 +50,7 @@ export default {
         name: '',
         path: '',
         url: '',
+        icon: '',
         componentName: '',
         component: '',
         hidden: false
@@ -82,8 +86,10 @@ export default {
           const data = res.data
           this.form.name = data.name
           this.form.path = data.path
+          this.form.componentName = data.enname
           this.form.component = data.component
           this.form.url = data.url
+          this.form.icon = data.icon
           this.form.hidden = data.available === 0
         }
       })
@@ -99,6 +105,7 @@ export default {
             enname: form.componentName,
             path: form.path,
             url: form.url,
+            icon: form.icon,
             component: form.component,
             available: form.hidden ? 0 : 1
           }
@@ -115,10 +122,18 @@ export default {
         }
       })
     },
+    reset() {
+      this.$emit('reset')
+      this.resetForm()
+    },
     save(param) {
       saveMenu(param).then(res => {
         if (res.success) {
           this.$message.success(res.msg)
+          // 清空表单
+          this.resetForm()
+          // 刷新菜单栏
+          this.refreshMenu()
         } else {
           this.$message.success(res.msg)
         }
@@ -128,19 +143,44 @@ export default {
       updateMenu(param).then(res => {
         if (res.success) {
           this.$message.success(res.msg)
+          // 刷新菜单栏
+          this.refreshMenu()
         } else {
           this.$message.success(res.msg)
         }
       })
+    },
+    delete(ids) {
+      this.$confirm('确定删除菜单?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteMenu({ menuIds: ids }).then(res => {
+          if (res.success) {
+            this.$message.success(res.msg)
+            // 刷新菜单栏
+            this.refreshMenu()
+          } else {
+            this.$message.success(res.msg)
+          }
+        })
+      }).catch(() => {
+      })
+
     },
     // 清空表单
     resetForm() {
       this.form.name = ''
       this.form.path = ''
       this.form.url = ''
+      this.form.icon = ''
       this.form.componentName = ''
       this.form.component = ''
       this.form.hidden = false
+    },
+    refreshMenu() {
+      this.$emit('refreshMenu')
     }
   }
 }

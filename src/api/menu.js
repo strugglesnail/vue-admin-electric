@@ -1,4 +1,5 @@
-import { get, post } from '@/utils/config'
+import { get, post, postForm } from '@/utils/config'
+import qs from 'qs'
 
 export function getMenuList() {
   return get('/api/menu/menuList')
@@ -15,26 +16,7 @@ export function saveMenu(param) {
 export function updateMenu(param) {
   return post('/api/menu/updateMenu', param)
 }
-
-// export function login(data) {
-//   return request({
-//     url: '/api/login',
-//     method: 'post',
-//     data,
-//     headers: { 'Content-Type': 'application/json;charset=utf-8' }
-//   })
-// }
-// export function getInfo(token) {
-//   return request({
-//     url: '/api/user/info',
-//     method: 'get',
-//     params: token
-//   })
-// }
-//
-// export function logout() {
-//   return request({
-//     url: '/api/logout',
-//     method: 'post'
-//   })
-// }
+export function deleteMenu(ids) {
+  // console.log(qs.stringify({menuIds: ids}, {arrayFormat: 'indices'}))
+  return post('/api/menu/deleteMenu', ids)
+}

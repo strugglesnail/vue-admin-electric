@@ -160,11 +160,12 @@ export const constantRoutes = [
   //   ]
   // },
   {
-    path: '/menu',
+    path: '/menu/index',
     component: Layout,
+    redirect: '/menu/index1',
     children: [
       {
-        path: 'index',
+        path: '',
         component: () => import('@/views/system/menu/index'),
         meta: { title: '菜单', icon: 'link' }
       }
