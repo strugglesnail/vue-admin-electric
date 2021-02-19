@@ -135,7 +135,7 @@ export default {
           // 刷新菜单栏
           this.refreshMenu()
         } else {
-          this.$message.success(res.msg)
+          this.$message.error(res.msg)
         }
       })
     },
@@ -146,7 +146,7 @@ export default {
           // 刷新菜单栏
           this.refreshMenu()
         } else {
-          this.$message.success(res.msg)
+          this.$message.error(res.msg)
         }
       })
     },
@@ -162,12 +162,10 @@ export default {
             // 刷新菜单栏
             this.refreshMenu()
           } else {
-            this.$message.success(res.msg)
+            this.$message.error(res.msg)
           }
         })
-      }).catch(() => {
-      })
-
+      }).catch(() => {})
     },
     // 清空表单
     resetForm() {

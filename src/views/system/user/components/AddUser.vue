@@ -1,8 +1,10 @@
 <template>
   <el-dialog
-    title="提示"
+    :title="getTitle"
     :visible.sync="compParam.visible"
     width="30%"
+    @open="beforeOpen"
+    :before-close="close"
     center>
     <el-form ref="form" :rules="rules" :model="form" label-width="110px">
     <el-form-item label="用户名称" prop="username">
@@ -18,19 +20,34 @@
       <el-input v-model="form.avatar" placeholder="请上传头像" />
     </el-form-item>
   </el-form>
-    <span slot="footer" class="dialog-footer">
-    <el-button @click="compParam.visible = false">取 消</el-button>
-    <el-button type="primary" @click="compParam.visible = false">确 定</el-button>
+  <span slot="footer" class="dialog-footer" v-if="!compParam.isView">
+    <el-button @click="close">取 消</el-button>
+    <el-button type="primary" @click="save">确 定</el-button>
   </span>
   </el-dialog>
 </template>
 <script>
-import { getUserById, saveUser, updateUser, deleteUser } from '@/api/user'
+import { getUserById, saveUser, updateUser } from '@/api/user'
 export default {
   name: 'AddUser',
   props: {
     compParam: {
       type: Object
+    }
+  },
+  computed: {
+    getTitle() {
+      const p = this.compParam
+      if (!p.userId && !p.isView) {
+        return '新增'
+      } else if (p.userId && !p.isView) {
+        return '更新'
+      } else {
+        return '查看'
+      }
+    },
+    getUserId() {
+      return this.compParam.userId
     }
   },
   data() {
@@ -58,6 +75,14 @@ export default {
     }
   },
   methods: {
+    beforeOpen() {
+      // 更新或查看
+      if (this.getUserId) {
+        this.getUser(this.getUserId)
+      } else {
+        this.resetForm()
+      }
+    },
     getUser(id) {
       getUserById({ userId: id }).then(res => {
         if (res.success) {
@@ -95,8 +120,8 @@ export default {
       this.$emit('reset')
       this.resetForm()
     },
-    save(param) {
-      saveUser(param).then(res => {
+    save() {
+      saveUser(this.form).then(res => {
         if (res.success) {
           this.$message.success(res.msg)
           // 清空表单
@@ -128,6 +153,10 @@ export default {
     },
     refreshTable() {
       this.$emit('refreshTable')
+    },
+    close() {
+      this.compParam.visible = false
+      this.$refs.form.resetFields()
     }
   }
 }
