@@ -106,9 +106,9 @@ export function postLogin(url, params) {
   })
 }
 
-export function postForm(url, params) {
+export function postForm(url, params, arrayFormat) {
   return new Promise((resolve, reject) => {
-    service.post(url, params)
+    service.post(url, qs.stringify(params, arrayFormat))
       .then(res => {
         resolve(res.data)
       })

@@ -111,7 +111,7 @@ export default {
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm).then((res) => {
             if (res.success) {
-              this.$router.push({ path: '/dashboard/index' })
+              this.$router.push({ path: '/' })
               this.$message.success(res.msg)
             } else {
               this.$message.error(res.msg)

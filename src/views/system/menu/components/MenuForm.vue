@@ -6,20 +6,20 @@
     <el-form-item label="菜单名称" prop="name">
       <el-input v-model="form.name" placeholder="请输入菜单名称" />
     </el-form-item>
-    <el-form-item label="菜单组件名称"  prop="componentName">
+    <el-form-item label="菜单组件名称" prop="componentName">
       <el-input v-model="form.componentName" placeholder="请输入菜单组件" />
     </el-form-item>
-    <el-form-item label="菜单组件路径"  prop="component">
+    <el-form-item label="菜单组件路径">
       <el-input v-model="form.component" placeholder="请输入菜单组件" />
     </el-form-item>
-    <el-form-item label="菜单路径"  prop="path">
+    <el-form-item label="菜单路径" prop="path">
       <el-input v-model="form.path" placeholder="请输入菜单路径" />
-    </el-form-item>
-    <el-form-item label="菜单图标">
-      <el-input v-model="form.icon" placeholder="请输入菜单图标" />
     </el-form-item>
     <el-form-item label="访问权限"  prop="url">
       <el-input v-model="form.url" placeholder="请输入访问权限" />
+    </el-form-item>
+    <el-form-item label="菜单图标">
+      <el-input v-model="form.icon" placeholder="请输入菜单图标" />
     </el-form-item>
     <el-form-item label="是否隐藏">
       <el-switch v-model="form.hidden" />

@@ -69,10 +69,9 @@ const actions = {
         }
 
         const { username, avatar, menuList } = data
-
         commit('SET_NAME', username)
         commit('SET_AVATAR', avatar)
-        commit('SET_MENU', filterAsyncRouter(menuList))
+        commit('SET_MENU', filterAsyncRouter1(menuList))
         resolve()
       }).catch(error => {
         reject(error)
@@ -134,11 +133,52 @@ const actions = {
   }
 }
 
+function filterAsyncRouter1(menuList) {
+  const routers = menuList.filter(menu => 0 === menu.parentId).map(menu => {
+    const m = {
+      path: menu.path,
+      name: menu.enname,
+      component: Layout,
+      children: [],
+        meta: { title: menu.label, icon: menu.icon
+        },
+      hidden: menu.available === 0
+    }
+    if (menu.children.length) {
+      m.children = filterAsyncRouter2(menu.id, menu.children)
+    } else {
+      m.children.push({
+        path: menu.path,
+        name: menu.enname,
+        component: loadView(menu.component),
+        meta: {title: menu.label, icon: menu.icon}
+      })
+    }
+    return m
+  })
+  routers.push({ path: '*', redirect: '/404', hidden: true })
+  return routers
+}
+function filterAsyncRouter2(pid, menuList) {
+  return menuList.filter(menu => pid === menu.parentId).map(menu => {
+    const m = {
+      path: menu.path,
+      component: loadView(menu.component),
+      name: menu.enname,
+      meta: { title: menu.label, icon: menu.icon },
+      children: [],
+      hidden: menu.available === 0
+    }
+    if (menu.children.length) {
+      m.children = filterAsyncRouter2(menu.id, menu.children)
+    }
+    return m
+  })
+}
+
 function filterAsyncRouter(menuList) {
   const menus = []
-  menuList.map(menu => {
-    // const paths = menu.path.split('/')
-    // console.log(menu.path, paths)
+  menuList.forEach(menu => {
     const m = {
       path: menu.path,
       component: Layout,
@@ -160,11 +200,7 @@ function filterAsyncRouter(menuList) {
     menus.push(m)
   })
   // 加载默认的路由
-  menus.push({
-    path: '/404',
-    component: () => import('@/views/404'),
-    hidden: true
-  })
+  menus.push({ path: '*', redirect: '/404', hidden: true })
   return menus
 }
 function getChildRouters(menuList) {

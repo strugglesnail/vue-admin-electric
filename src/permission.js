@@ -24,7 +24,7 @@ router.beforeEach(async(to, from, next) => {
       console.log(to.path, hasToken)
 
       // if is logged in, redirect to the home page
-      next({ path: '/dashboard/index' })
+      next({ path: '/' })
       NProgress.done()
     } else {
       const hasGetUserInfo = store.getters.name
@@ -35,8 +35,9 @@ router.beforeEach(async(to, from, next) => {
           // get user info
           await store.dispatch('user/getInfo')
           const asyncRouter = store.getters.menu
+          // console.log(asyncRouter)
+
           router.addRoutes(asyncRouter)
-          // console.log(1111)
           next({ ...to, replace: true })
         } catch (error) {
           console.log('resetToken', error)

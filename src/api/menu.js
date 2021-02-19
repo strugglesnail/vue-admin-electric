@@ -16,7 +16,7 @@ export function saveMenu(param) {
 export function updateMenu(param) {
   return post('/api/menu/updateMenu', param)
 }
-export function deleteMenu(ids) {
+export function deleteMenu(params) {
   // console.log(qs.stringify({menuIds: ids}, {arrayFormat: 'indices'}))
-  return post('/api/menu/deleteMenu', ids)
+  return postForm('/api/menu/deleteMenu', params, { arrayFormat: 'repeat' })
 }

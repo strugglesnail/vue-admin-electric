@@ -1,4 +1,3 @@
-import request from '@/utils/request'
 import { get, post, postLogin } from '@/utils/config'
 
 export function login(data) {
@@ -11,6 +10,21 @@ export function getInfo(token) {
 
 export function logout() {
   return post('/api/logout')
+}
+export function getUserPage(param) {
+  return get('/api/user/getUserPage', param)
+}
+export function getUserById(param) {
+  return get('/api/user/getUserById', param)
+}
+export function saveUser(param) {
+  return post('/api/user/addUser', param)
+}
+export function updateUser(param) {
+  return post('/api/user/updateUser', param)
+}
+export function deleteUser(param) {
+  return get('/api/user/deleteUser', param)
 }
 
 // export function login(data) {

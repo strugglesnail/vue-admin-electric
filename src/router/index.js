@@ -37,23 +37,23 @@ export const constantRoutes = [
     hidden: true
   },
   //
-  // {
-  //   path: '/404',
-  //   component: () => import('@/views/404'),
-  //   hidden: true
-  // },
-  //
-  // {
-  //   path: '/',
-  //   component: Layout,
-  //   redirect: '/dashboard',
-  //   children: [{
-  //     path: 'dashboard',
-  //     name: 'Dashboard',
-  //     component: () => import('@/views/dashboard/index'),
-  //     meta: { title: 'Dashboard', icon: 'dashboard' }
-  //   }]
-  // },
+  {
+    path: '/404',
+    component: () => import('@/views/404'),
+    hidden: true
+  },
+
+  {
+    path: '/',
+    component: Layout,
+    redirect: '/dashboard',
+    children: [{
+      path: 'dashboard',
+      name: 'Dashboard',
+      component: () => import('@/views/dashboard/index'),
+      meta: { title: '首页', icon: 'dashboard' }
+    }]
+  },
 
   // {
   //   path: '/example',
@@ -159,18 +159,18 @@ export const constantRoutes = [
   //     }
   //   ]
   // },
-  {
-    path: '/menu/index',
-    component: Layout,
-    redirect: '/menu/index1',
-    children: [
-      {
-        path: '',
-        component: () => import('@/views/system/menu/index'),
-        meta: { title: '菜单', icon: 'link' }
-      }
-    ]
-  },
+  // {
+  //   path: '/menu/index',
+  //   component: Layout,
+  //   redirect: '/menu/index1',
+  //   children: [
+  //     {
+  //       path: '',
+  //       component: () => import('@/views/system/menu/index'),
+  //       meta: { title: '菜单', icon: 'link' }
+  //     }
+  //   ]
+  // },
 
   // 404 page must be placed at the end !!!
   // { path: '*', redirect: '/404', hidden: true }
