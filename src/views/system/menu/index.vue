@@ -69,7 +69,6 @@ export default {
 
     // 添加操作
     addNode(node) {
-      node = node.rootNode
       // 清空表单
       this.hasClear = true
       this.$refs.menuForm.resetForm()

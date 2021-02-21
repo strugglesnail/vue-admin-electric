@@ -3,17 +3,8 @@
     <el-container>
       <el-header>
         <el-form :inline="true" :model="searchData" class="demo-form-inline">
-          <el-form-item label="用户名称">
-            <el-input v-model="searchData.username" placeholder="用户名称" />
-          </el-form-item>
-          <el-form-item label="用户账号">
-            <el-input v-model="searchData.account" placeholder="用户名称" />
-          </el-form-item>
-          <el-form-item label="用户状态">
-            <el-select v-model="searchData.status" placeholder="用户状态">
-              <el-option label="已删除" value="0" />
-              <el-option label="正常" value="1" />
-            </el-select>
+          <el-form-item label="角色名称">
+            <el-input v-model="searchData.name" placeholder="角色名称" />
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="search">查询</el-button>
@@ -37,29 +28,22 @@
               {{ scope.$index + 1 }}
             </template>
           </el-table-column>
-          <el-table-column label="用户名称" align="center" width="110">
+          <el-table-column label="角色名称" align="center" width="110">
             <template slot-scope="scope">
-              {{ scope.row.username }}
+              {{ scope.row.name }}
             </template>
           </el-table-column>
-          <el-table-column label="账号" width="110" align="center">
+          <el-table-column label="角色英文名称" width="110" align="center">
             <template slot-scope="scope">
-              <span>{{ scope.row.account }}</span>
+              <span>{{ scope.row.enname }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="头像" width="80" align="center">
+          <el-table-column label="角色描述" width="150" align="center">
             <template slot-scope="scope">
-              <el-avatar :src="scope.row.avatar"></el-avatar>
-            </template>
-          </el-table-column>
-          <el-table-column class-name="status-col" label="状态" width="110" align="center">
-            <template slot-scope="scope">
-              {{ scope.row.status | statusFilter }}
-              <!--<el-tag :type="scope.row.status | statusFilter">{{ scope.row.status }}</el-tag>-->
+              <span>{{ scope.row.description }}</span>
             </template>
           </el-table-column>
           <el-table-column align="center" prop="createTime" label="创建时间" width="200" :formatter="formatter" />
-          <el-table-column align="center" prop="lastLoginTime" label="最后一次登录时间" width="200" :formatter="formatter" />
           <el-table-column
             fixed="right"
             label="操作"
@@ -67,7 +51,7 @@
           >
             <template slot-scope="scope">
               <el-button type="text" size="small" @click="update(scope.row)">编辑</el-button>
-              <el-button type="text" size="small" @click="bindRole(scope.row)">绑定角色</el-button>
+              <el-button type="text" size="small" @click="bindMenu(scope.row)">授权</el-button>
               <el-button type="text" size="small" @click="lookup(scope.row)">查看</el-button>
             </template>
           </el-table-column>
@@ -87,34 +71,23 @@
         />
       </el-footer>
     </el-container>
-    <add-user :comp-param="compParam" />
-    <bind-role :bindParam="bindParam" />
+    <add-role :role-param="roleParam" @refreshTable="refreshTable"/>
+    <bind-menu :bind-param="bindParam" />
   </div>
 </template>
 
 <script>
 import dayjs from 'dayjs'
-import { getUserPage, deleteUser } from '@/api/user'
-import AddUser from './components/AddUser'
-import BindRole from './components/BindRole'
+import { getRolePage, deleteRole } from '@/api/role'
+import AddRole from './components/AddRole'
+import BindMenu from './components/BindMenu'
 export default {
-  name: 'User',
-  components: { AddUser, BindRole },
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        deleted: '已删除',
-        published: '正常'
-      }
-      return statusMap[status]
-    }
-  },
+  name: 'Role',
+  components: { AddRole, BindMenu },
   data() {
     return {
       searchData: {
-        username: '',
-        account: '',
-        status: ''
+        name: ''
       },
       list: null,
       listLoading: true,
@@ -124,15 +97,15 @@ export default {
         sizes: [10, 20, 50, 100],
         total: 0
       },
-      // 新增用户组件
-      compParam: {
-        userId: null,
+      // 新增角色组件
+      roleParam: {
+        roleId: null,
         visible: false,
         isView: false
       },
-      // 绑定角色组件
+      // 绑定菜单组件
       bindParam: {
-        userId: null,
+        roleId: null,
         visible: false
       }
     }
@@ -141,17 +114,15 @@ export default {
     this.fetchData()
   },
   methods: {
-    // 获取分页用户
+    // 获取分页角色
     fetchData() {
       this.listLoading = true
       const param = {
-        username: this.searchData.username,
-        account: this.searchData.account,
-        status: this.searchData.status,
+        name: this.searchData.name,
         pageNo: this.page.pageNo,
         pageSize: this.page.pageSize
       }
-      getUserPage(param).then(res => {
+      getRolePage(param).then(res => {
         if (res.success) {
           const data = res.data
           if (data) {
@@ -163,50 +134,50 @@ export default {
       })
     },
 
-    // 搜索用户
+    // 搜索角色
     search() {
       this.page.pageNo = 1
       this.fetchData()
     },
 
-    // 新增用户
+    // 新增角色
     add() {
-      this.setCompParam(null, true, false)
+      this.setRoleParam(null, true, false)
     },
 
-    // 更新用户
+    // 更新角色
     update(row) {
-      this.setCompParam(row.id, true, false)
+      this.setRoleParam(row.id, true, false)
     },
 
-    // 绑定角色
-    bindRole(row) {
-      this.bindParam.userId = row.id
+    // 查看角色
+    lookup(row) {
+      this.setRoleParam(row.id, true, true)
+    },
+
+    // 绑定菜单
+    bindMenu(row) {
+      this.bindParam.roleId = row.id
       this.bindParam.visible = true
     },
 
-    // 查看用户
-    lookup(row) {
-      this.setCompParam(row.id, true, true)
+    setRoleParam(roleId, visible, isView) {
+      this.roleParam.roleId = roleId
+      this.roleParam.visible = visible
+      this.roleParam.isView = isView
     },
 
-    setCompParam(userId, visible, isView) {
-      this.compParam.userId = userId
-      this.compParam.visible = visible
-      this.compParam.isView = isView
-    },
-
-    // 删除用户
+    // 删除角色
     delete(id) {
-      this.$confirm('确定删除用户?', '提示', {
+      this.$confirm('确定删除角色?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteUser({ userId: id }).then(res => {
+        deleteRole({ roleId: id }).then(res => {
           if (res.success) {
             this.$message.success(res.msg)
-            // 刷新菜单栏
+            // 刷新表格
             this.search()
           } else {
             this.$message.success(res.msg)
@@ -220,10 +191,14 @@ export default {
       if (!value || value.length === 0) {
         return ''
       }
-      if (['createTime', 'lastLoginTime'].includes(column.property)) {
+      if (['createTime'].includes(column.property)) {
         return dayjs(value).format('YYYY-MM-DD HH:mm:ss')
       }
       return value
+    },
+    // 刷新表格
+    refreshTable() {
+      this.search()
     }
   }
 }

@@ -4,8 +4,7 @@
     :visible.sync="compParam.visible"
     width="30%"
     @open="beforeOpen"
-    :before-close="close"
-    center>
+    :before-close="close">
     <el-form ref="form" :rules="rules" :model="form" label-width="110px">
     <el-form-item label="用户名称" prop="username">
       <el-input v-model="form.username" placeholder="请输入用户名称" />
@@ -163,5 +162,8 @@ export default {
 </script>
 
 <style scoped>
-
+  .dialog-footer {
+    text-align: center;
+    display: block;
+  }
 </style>

@@ -17,6 +17,9 @@ export function getUserPage(param) {
 export function getUserById(param) {
   return get('/api/user/getUserById', param)
 }
+export function getUserRoleById(param) {
+  return get('/api/user/getUserRoleById', param)
+}
 export function saveUser(param) {
   return post('/api/user/addUser', param)
 }
