@@ -21,3 +21,6 @@ export function updateRole(param) {
 export function deleteRole(params) {
   return postForm('/api/role/deleteRole', params, { arrayFormat: 'repeat' })
 }
+export function updateRoleMenu(params) {
+  return postForm('/api/role/updateRoleMenu', params, { arrayFormat: 'repeat' })
+}
