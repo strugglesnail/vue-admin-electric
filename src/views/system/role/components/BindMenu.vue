@@ -16,13 +16,13 @@
       :props="defaultProps">
     </el-tree>
 
-    <!--<div class="buttons">-->
+    <div class="buttons">
       <!--<el-button @click="getCheckedNodes">通过 node 获取</el-button>-->
-      <!--<el-button @click="getCheckedKeys">通过 key 获取</el-button>-->
+      <el-button @click="getCheckedKeys">通过 key 获取</el-button>
       <!--<el-button @click="setCheckedNodes">通过 node 设置</el-button>-->
       <!--<el-button @click="setCheckedKeys">通过 key 设置</el-button>-->
-      <!--<el-button @click="resetChecked">清空</el-button>-->
-    <!--</div>-->
+      <el-button @click="resetChecked">清空</el-button>
+    </div>
   <span slot="footer" class="dialog-footer" v-if="!bindParam.isView">
     <el-button @click="close">取 消</el-button>
     <el-button type="primary" @click="onSubmit">确 定</el-button>
@@ -46,7 +46,8 @@ export default {
   },
   data() {
     return {
-      data: [{
+      data: [
+        {
         id: 1,
         label: '一级 1',
         children: [{
@@ -81,6 +82,7 @@ export default {
           label: '二级 3-2'
         }]
       }],
+      chooseNodes: [],
       defaultProps: {
         children: 'children',
         label: 'label'
@@ -98,6 +100,7 @@ export default {
           const data = res.data
           if (data) {
             this.data = data.allMenu
+            this.chooseNodes = data.roleMenu
             setTimeout(() => {
               this.$refs.tree.setCheckedNodes(data.roleMenu)
             }, 10)
@@ -121,7 +124,16 @@ export default {
     resetChecked() {
       this.$refs.tree.setCheckedKeys([])
     },
-    onSubmit() {},
+    onSubmit() {
+      const newMenuIds = []
+      const menuIds = this.$refs.tree.getCheckedKeys()
+      if (this.chooseNodes && this.chooseNodes.length)
+      menuIds.forEach(menuId => {
+        if (this.chooseNodes.some(n => menuId !== n.id)) {
+          newMenuIds.push(menuId)
+        }
+      })
+    },
     close() {
       this.bindParam.visible = false
     }
