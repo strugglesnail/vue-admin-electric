@@ -14,6 +14,7 @@
       node-key="id"
       highlight-current
       :props="defaultProps"
+      @node-click="nodeClick"
       @check-change="chooseNode"
     />
 
@@ -94,6 +95,10 @@ export default {
     beforeOpen() {
       this.getRoleMenu()
     },
+    nodeClick(node, even) {
+
+      console.log(even.parent.label)
+    },
     // 获取角色菜单
     getRoleMenu() {
       getMenuByRoleId({ roleId: this.getRoleId }).then(res => {
@@ -103,7 +108,12 @@ export default {
             this.data = data.allMenu
             this.chooseNodes = data.roleMenu
             setTimeout(() => {
-              this.$refs.tree.setCheckedNodes(data.roleMenu)
+              const roleMenus = data.roleMenu
+              if (roleMenus && roleMenus.length) {
+                const matchMenus = roleMenus.filter(a => a.parentId !== 0 || roleMenus.some( b=> b.parentId === 0 && a.parentId === b.id ))
+                console.log('matchMenus: ', matchMenus)
+                this.$refs.tree.setCheckedNodes(matchMenus)
+              }
             }, 10)
           }
         }
@@ -127,23 +137,34 @@ export default {
     },
     onSubmit() {
       const newMenuIds = []
-      const menuIds = this.$refs.tree.getCheckedKeys()
+      const oldMenuIds = []
+      const parentIdMenuIds = this.$refs.tree.getHalfCheckedKeys()
+      const menuIds = parentIdMenuIds.concat(this.$refs.tree.getCheckedKeys())
       // 获取新增的菜单
       if (this.chooseNodes && this.chooseNodes.length) {
         menuIds.forEach(menuId => {
           if (!this.chooseNodes.some(n => menuId === n.id)) {
             newMenuIds.push(menuId)
           }
+          if (this.chooseNodes.some(n => menuId === n.id)) {
+            oldMenuIds.push(menuId)
+          }
         })
       }
       // 更新菜单
-
+      console.log('parentIdMenuIds: ', parentIdMenuIds)
       console.log('newMenuIds: ', newMenuIds)
-      updateRoleMenu({ newMenuIds: newMenuIds, roleId: this.getRoleId }).then(res => {
-        if (res.success) {
-
-        }
-      })
+      console.log('oldMenuIds: ', oldMenuIds)
+      // updateRoleMenu({ oldMenuIds: oldMenuIds, newMenuIds: newMenuIds, roleId: this.getRoleId }).then(res => {
+      //   if (res.success) {
+      //     this.$message.success(res.msg)
+      //     this.close()
+      //   } else {
+      //     this.$message.success(res.msg)
+      //   }
+      // }).catch(err => {
+      //   console.log(err)
+      // })
     },
     close() {
       this.bindParam.visible = false
