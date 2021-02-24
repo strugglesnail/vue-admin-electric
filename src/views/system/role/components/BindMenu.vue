@@ -96,7 +96,6 @@ export default {
       this.getRoleMenu()
     },
     nodeClick(node, even) {
-
       console.log(even.parent.label)
     },
     // 获取角色菜单
@@ -110,8 +109,9 @@ export default {
             setTimeout(() => {
               const roleMenus = data.roleMenu
               if (roleMenus && roleMenus.length) {
-                const matchMenus = roleMenus.filter(a => a.parentId !== 0 || roleMenus.some( b=> b.parentId === 0 && a.parentId === b.id ))
-                console.log('matchMenus: ', matchMenus)
+                // 过滤掉带有子节点的父节点：原因是tree带有父节点默认全选
+                const matchMenus = roleMenus.filter(a => !roleMenus.some(b => b.parentId === a.id))
+                console.log('matchMenus: ', matchMenus.map(m => m.label))
                 this.$refs.tree.setCheckedNodes(matchMenus)
               }
             }, 10)
@@ -155,16 +155,16 @@ export default {
       console.log('parentIdMenuIds: ', parentIdMenuIds)
       console.log('newMenuIds: ', newMenuIds)
       console.log('oldMenuIds: ', oldMenuIds)
-      // updateRoleMenu({ oldMenuIds: oldMenuIds, newMenuIds: newMenuIds, roleId: this.getRoleId }).then(res => {
-      //   if (res.success) {
-      //     this.$message.success(res.msg)
-      //     this.close()
-      //   } else {
-      //     this.$message.success(res.msg)
-      //   }
-      // }).catch(err => {
-      //   console.log(err)
-      // })
+      updateRoleMenu({ oldMenuIds: oldMenuIds, newMenuIds: newMenuIds, roleId: this.getRoleId }).then(res => {
+        if (res.success) {
+          this.$message.success(res.msg)
+          this.close()
+        } else {
+          this.$message.success(res.msg)
+        }
+      }).catch(err => {
+        console.log(err)
+      })
     },
     close() {
       this.bindParam.visible = false

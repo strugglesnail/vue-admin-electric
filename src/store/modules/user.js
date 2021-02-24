@@ -69,6 +69,7 @@ const actions = {
         }
 
         const { username, avatar, menuList } = data
+        // console.log(filterAsyncRouter1(menuList))
         commit('SET_NAME', username)
         commit('SET_AVATAR', avatar)
         commit('SET_MENU', filterAsyncRouter1(menuList))
@@ -134,14 +135,13 @@ const actions = {
 }
 
 function filterAsyncRouter1(menuList) {
-  const routers = menuList.filter(menu => 0 === menu.parentId).map(menu => {
+  const routers = menuList.filter(menu => menu.parentId === 0).map(menu => {
     const m = {
       path: menu.path,
       name: menu.enname,
       component: Layout,
       children: [],
-        meta: { title: menu.label, icon: menu.icon
-        },
+      meta: { title: menu.label, icon: menu.icon },
       hidden: menu.available === 0
     }
     if (menu.children.length) {
@@ -151,7 +151,7 @@ function filterAsyncRouter1(menuList) {
         path: menu.path,
         name: menu.enname,
         component: loadView(menu.component),
-        meta: {title: menu.label, icon: menu.icon}
+        meta: { title: menu.label, icon: menu.icon }
       })
     }
     return m
