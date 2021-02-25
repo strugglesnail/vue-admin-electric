@@ -95,25 +95,6 @@ const actions = {
     })
   },
 
-  // 检查token是否过期，过期则刷新
-  // refreshToken({ commit, state }) {
-  //   return new Promise((resolve, reject) => {
-  //     checkToken({ accessToken: state.accessToken, userId: state.userId }).then((response) => {
-  //       const data = response.data
-  //       if (data) {
-  //         commit('SET_ACCESS_TOKEN', data.accessToken)
-  //         commit('SET_REFRESH_TOKEN', data.refreshToken)
-  //         commit('SET_USER_ID', data.userId)
-  //         setAccessToken(data.accessToken)
-  //         setRefreshToken(data.refreshToken)
-  //       }
-  //       resolve()
-  //     }).catch(error => {
-  //       reject(error)
-  //     })
-  //   })
-  // },
-
   // remove token
   resetToken({ commit }) {
     return new Promise(resolve => {

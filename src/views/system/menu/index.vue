@@ -2,13 +2,21 @@
   <div class="app-container">
     <el-container style="height: 600px; border: 1px solid #eee">
       <el-aside width="300px" style="background-color: rgb(238, 241, 246);border: 10px solid #eee;">
+
+        <el-input
+          style="margin-bottom: 1px;"
+          placeholder="输入关键字进行过滤"
+          v-model="filterText">
+        </el-input>
         <el-tree
+          ref="tree"
           :data="data"
           node-key="id"
-          :default-expanded-keys="[2, 3]"
+          :default-expanded-keys="defaultExpandedKeys"
           :props="defaultProps"
           @node-click="nodeClick"
           @node-contextmenu="rightClick"
+          :filter-node-method="filterNode"
         />
         <div id="menu" @mouseleave="menuVisible = !menuVisible">
           <el-card v-if="menuVisible" class="box-card">
@@ -36,22 +44,33 @@ export default {
   components: { MenuForm },
   data() {
     return {
+      filterText: '',
       data: [],
       defaultProps: {
         id: 'id',
         children: 'children',
         label: 'label'
       },
+      defaultExpandedKeys: [],
       nodeData: {},
       operateNode: {},
       menuVisible: false,
       hasClear: true // 是否清除表单：true=添加操作  false=更新操作
     }
   },
+  watch: {
+    filterText(val) {
+      this.$refs.tree.filter(val)
+    }
+  },
   mounted() {
     this.getMenuList()
   },
   methods: {
+    filterNode(value, data) {
+      if (!value) return true;
+      return data.label.indexOf(value) !== -1;
+  },
     nodeClick(node, even) {
       this.setNode(node.id, even.parent.label)
 
@@ -80,7 +99,7 @@ export default {
       // 获取该节点下的子节点id
       const ids = this.getNodeIds(node.id, node.children)
       ids.push(node.id)
-      console.log(ids)
+      // console.log(ids)
       this.$refs.menuForm.delete(ids)
       this.refreshMenu()
       this.menuVisible = false
@@ -93,6 +112,10 @@ export default {
       getMenuList().then(res => {
         if (res.success) {
           this.data = res.data
+          // 展开新增的节点
+          if (this.nodeData.id) {
+            this.defaultExpandedKeys = [this.nodeData.id]
+          }
         }
       })
     },

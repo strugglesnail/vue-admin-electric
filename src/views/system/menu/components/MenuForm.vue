@@ -7,10 +7,10 @@
       <el-input v-model="form.name" placeholder="请输入菜单名称" />
     </el-form-item>
     <el-form-item label="菜单组件名称" prop="componentName">
-      <el-input v-model="form.componentName" placeholder="请输入菜单组件" />
+      <el-input v-model="form.componentName" placeholder="请输入菜单组件名称" />
     </el-form-item>
     <el-form-item label="菜单组件路径">
-      <el-input v-model="form.component" placeholder="请输入菜单组件" />
+      <el-input v-model="form.component" placeholder="请输入菜单组件路径" />
     </el-form-item>
     <el-form-item label="菜单路径" prop="path">
       <el-input v-model="form.path" placeholder="请输入菜单路径" />
