@@ -1,7 +1,7 @@
-import { get, post, postLogin } from '@/utils/config'
+import { get, post, postFormLogin } from '@/utils/config'
 
 export function login(data) {
-  return postLogin('/api/login', data)
+  return postFormLogin('/api/login', data, { arrayFormat: 'repeat' })
 }
 
 export function getInfo(token) {

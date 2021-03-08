@@ -1,5 +1,5 @@
 import { get, post, postForm } from '@/utils/config'
-import qs from 'qs'
+// import qs from 'qs'
 
 export function getMenuList() {
   return get('/api/menu/menuList')
